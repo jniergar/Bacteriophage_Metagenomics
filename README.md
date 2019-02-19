@@ -1,4 +1,4 @@
 # Bacteriophage_Metagenomics
-# Jessmyn Niergarth
+Jessmyn Niergarth
 
-# Files invovled with the processing of bacteriophage metagenomic sequence data
+Files invovled with the processing of bacteriophage metagenomic sequence data
