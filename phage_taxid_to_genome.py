@@ -2,7 +2,7 @@
 import re, os, sys, subprocess, time
 
 # 2019-01-09 Jessmyn Niergarth
-# Purpose: To use outputs of get_RPKMs_actuallyRPKMs.py to get phage genomes from NCBI.
+# Purpose: Use outputs of get_RPKMs_actuallyRPKMs.py to find and print out phage genomes from NCBI.
 
 # Requires:
 taxidfile = "get_RPKMs_actuallyRPKMs_taxids.out"
@@ -10,7 +10,6 @@ linfile = "get_RPKMs_actuallyRPKMs.out"
 sortfile = "taxid_categorization_redux.txt" #file of virus hosts
 
 outfile1 = re.sub(r"\.py", ".fasta", __file__)
-#outfile2 = re.sub(r"\.py", "_accns_to_taxids.txt", __file__)
 
 # Get taxids:
 all_taxids = []
@@ -38,7 +37,7 @@ for line in INSORT:
 			taxon_record[line_l[0]] = 0
 INSORT.close()
 
-# Only keep taxids corresponding to bacteriophages, by going through lineage file:
+# Only keep taxids corresponding to bacteriophages, according to lineage file:
 vir_taxids = []
 vir_lin = {} #virus lineages
 counter = -1
@@ -62,20 +61,20 @@ for line in INLIN:
 			elif matches <1:
 				print("Multiple matches for line: "+line)
 INLIN.close()
-
 print("Number of taxids total: "+str(len(all_taxids))+"\nNumber of phage taxids: "+str(len(vir_taxids)))
 
+# Intermediate checkin:
 for onetax in taxon_record:
 	if taxon_record[onetax] == 0:
 		print("No taxids found for taxon:\t"+onetax)
 	else:
 		print("As expected, found taxids for taxon:\t"+onetax)
 
-# Use esearch (from Entrez Direct: E-utilities) and print out fasta file, with taxid at start of ID lines:
+# Use esearch (from Entrez Direct: E-utilities) to find genomes corresponding to taxids and print to fasta file, with taxid at start of ID lines:
 OUT1 = open(outfile1, 'w')
 failed_taxids = []
 for onevir in vir_taxids:
-	print("Doing taxid for taxid:\t"+onevir+"\tlineage: "+vir_lin[onevir])
+	print("Doing taxid:\t"+onevir+"\tlineage: "+vir_lin[onevir])
 	cmd = 'esearch -db nuccore -query "txid'+onevir+' AND refseq[filter]" -silent | efetch -format fasta'
 	result = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True).stdout.decode('utf-8')
 	time.sleep(.2)
@@ -91,7 +90,7 @@ for onevir in vir_taxids:
 print("Re-attempting taxids that didn't work:")
 double_failed = []
 for onevir in failed_taxids:
-	 print("Doing taxid for taxid:\t"+onevir+"\tlineage: "+vir_lin[onevir])
+	 print("Doing taxid:\t"+onevir+"\tlineage: "+vir_lin[onevir])
 	cmd = 'esearch -db nuccore -query "txid'+onevir+' AND refseq[filter]" -silent | efetch -format fasta'
 	result = subprocess.run(cmd, stdout=subprocess.PIPE, shell=True).stdout.decode('utf-8')
 	time.sleep(.2)
