@@ -1,4 +1,4 @@
 # Bacteriophage_Metagenomics
 Jessmyn Niergarth
 
-Files invovled with the processing of bacteriophage metagenomic sequence data
+Several of the programs used to process bacteriophage metagenomic shotgun sequence data.
